@@ -32,33 +32,48 @@ function sanitize(str, maxLen) {
   return str.trim().slice(0, maxLen).replace(/<[^>]*>/g, "").replace(/[<>]/g, "");
 }
 
-const rooms      = new Map();
-const roomOwners = new Map();
+const rooms      = new Map(); // roomId -> [{ id, name, offline }]
+const roomOwners = new Map(); // roomId -> socketId
+// socketId -> roomId (which room this socket is currently in)
+const socketRoom = new Map();
 
 function addUserToRoom(roomId, user) {
   if (!rooms.has(roomId)) rooms.set(roomId, []);
   const list = rooms.get(roomId);
-  if (!list.some(u => u.id === user.id)) list.push(user);
+  const idx = list.findIndex(u => u.id === user.id);
+  if (idx !== -1) list.splice(idx, 1);
+  list.push({ ...user, offline: false });
   if (!roomOwners.has(roomId)) roomOwners.set(roomId, user.id);
+  socketRoom.set(user.id, roomId);
 }
 
-function removeUserFromRooms(socketId) {
-  const affected = [];
-  for (const [roomId, users] of rooms) {
-    const filtered = users.filter(u => u.id !== socketId);
-    if (filtered.length !== users.length) {
-      affected.push(roomId);
-      if (filtered.length === 0) {
-        rooms.delete(roomId);
-        roomOwners.delete(roomId);
-      } else {
-        rooms.set(roomId, filtered);
-        if (roomOwners.get(roomId) === socketId)
-          roomOwners.set(roomId, filtered[0].id);
-      }
-    }
+// Mark user offline instead of removing; only remove room if owner leaves explicitly
+function markUserOffline(socketId) {
+  const roomId = socketRoom.get(socketId);
+  if (!roomId) return null;
+  const list = rooms.get(roomId);
+  if (!list) return null;
+  const user = list.find(u => u.id === socketId);
+  if (user) user.offline = true;
+  return roomId;
+}
+
+function removeUserFromRoom(socketId) {
+  const roomId = socketRoom.get(socketId);
+  if (!roomId) return null;
+  socketRoom.delete(socketId);
+  const list = rooms.get(roomId);
+  if (!list) return null;
+  const filtered = list.filter(u => u.id !== socketId);
+  if (filtered.length === 0) {
+    rooms.delete(roomId);
+    roomOwners.delete(roomId);
+  } else {
+    rooms.set(roomId, filtered);
+    if (roomOwners.get(roomId) === socketId)
+      roomOwners.set(roomId, filtered.find(u => !u.offline)?.id ?? filtered[0].id);
   }
-  return affected;
+  return roomId;
 }
 
 const httpServer = createServer((req, res) => {
@@ -93,44 +108,86 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   let joinedRoom = null;
 
-  socket.on("join-room", (rawRoomId, rawName) => {
-    const roomId = sanitize(rawRoomId, MAX_ROOM_ID_LEN);
-    const name   = sanitize(rawName,   MAX_NAME_LEN);
+  // pendingJoin: { roomId, name } waiting for user confirmation
+  let pendingJoin = null;
 
-    if (!roomId || !ROOM_ID_RE.test(roomId)) {
-      socket.emit("error", "Invalid room ID.");
-      return;
-    }
-    if (!name || !NAME_RE.test(name)) {
-      socket.emit("error", "Invalid name.");
-      return;
-    }
-    const list = rooms.get(roomId) ?? [];
-    if (list.length >= MAX_ROOM_SIZE) {
-      socket.emit("error", `Room is full (max ${MAX_ROOM_SIZE}).`);
-      return;
-    }
+  function doJoin(roomId, name) {
     if (joinedRoom && joinedRoom !== roomId) {
       socket.leave(joinedRoom);
-      removeUserFromRooms(socket.id);
+      removeUserFromRoom(socket.id);
+      const prev = joinedRoom;
+      io.to(prev).emit("room-users", rooms.get(prev) ?? []);
     }
-    // Cancel any pending auto-delete timer when someone joins
     joinedRoom = roomId;
     socket.join(roomId);
     addUserToRoom(roomId, { id: socket.id, name });
     io.to(roomId).emit("room-users", rooms.get(roomId));
+  }
+
+  socket.on("join-room", (rawRoomId, rawName) => {
+    const roomId = sanitize(rawRoomId, MAX_ROOM_ID_LEN);
+    const name   = sanitize(rawName,   MAX_NAME_LEN);
+
+    if (!roomId || !ROOM_ID_RE.test(roomId)) { socket.emit("error", "Invalid room ID."); return; }
+    if (!name || !NAME_RE.test(name))         { socket.emit("error", "Invalid name.");   return; }
+
+    const list = rooms.get(roomId) ?? [];
+    if (list.length >= MAX_ROOM_SIZE) { socket.emit("error", `Room is full (max ${MAX_ROOM_SIZE}).`); return; }
+
+    // Already in this room — just re-join (reconnect)
+    if (joinedRoom === roomId) { doJoin(roomId, name); return; }
+
+    const currentRoom = socketRoom.get(socket.id);
+
+    if (currentRoom && currentRoom !== roomId) {
+      const isOwner = roomOwners.get(currentRoom) === socket.id;
+      pendingJoin = { roomId, name };
+      if (isOwner) {
+        socket.emit("owner-room-conflict", { currentRoomId: currentRoom });
+      } else {
+        socket.emit("participant-room-conflict", { currentRoomId: currentRoom });
+      }
+      return;
+    }
+
+    doJoin(roomId, name);
   });
+
+  // User confirmed they want to leave their current room and join the new one
+  socket.on("confirm-leave-and-join", () => {
+    if (!pendingJoin) return;
+    const { roomId, name } = pendingJoin;
+    pendingJoin = null;
+    // If owner, close old room
+    if (joinedRoom && roomOwners.get(joinedRoom) === socket.id) {
+      const oldRoom = joinedRoom;
+      io.to(oldRoom).emit("room-closed", "Room closed: owner left.");
+      rooms.delete(oldRoom);
+      roomOwners.delete(oldRoom);
+      socketRoom.delete(socket.id);
+      socket.leave(oldRoom);
+      joinedRoom = null;
+    }
+    doJoin(roomId, name);
+  });
+
+  socket.on("cancel-join", () => { pendingJoin = null; });
 
   socket.on("leave-room", () => {
     if (!joinedRoom) return;
     const roomId = joinedRoom;
+    const isOwner = roomOwners.get(roomId) === socket.id;
     joinedRoom = null;
     socket.leave(roomId);
     msgRates.delete(socket.id);
-    const affected = removeUserFromRooms(socket.id);
-    for (const rid of affected) {
-      const remaining = rooms.get(rid);
-      io.to(rid).emit("room-users", remaining ?? []);
+    if (isOwner) {
+      io.to(roomId).emit("room-closed", "Room closed: owner left.");
+      rooms.delete(roomId);
+      roomOwners.delete(roomId);
+      socketRoom.delete(socket.id);
+    } else {
+      removeUserFromRoom(socket.id);
+      io.to(roomId).emit("room-users", rooms.get(roomId) ?? []);
     }
   });
 
@@ -174,10 +231,18 @@ io.on("connection", (socket) => {
     socket.to(target).emit("ice-candidate", { candidate, from: socket.id });
   });
 
+  socket.on("call-rejected", (data) => {
+    if (typeof data !== "object" || !data) return;
+    const { target } = data;
+    if (typeof target !== "string") return;
+    socket.to(target).emit("call-rejected");
+  });
+
   socket.on("disconnect", () => {
     msgRates.delete(socket.id);
-    const affected = removeUserFromRooms(socket.id);
-    for (const roomId of affected) {
+    // Mark offline instead of removing — room persists until owner explicitly leaves
+    const roomId = markUserOffline(socket.id);
+    if (roomId) {
       io.to(roomId).emit("room-users", rooms.get(roomId) ?? []);
     }
   });

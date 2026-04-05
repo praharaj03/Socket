@@ -191,6 +191,14 @@ export default function Room() {
     inputRef.current?.focus();
   };
 
+  const [copied, setCopied] = useState(false);
+
+  const copyRoomId = () => {
+    navigator.clipboard.writeText(id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const av = (n: string) => n.charAt(0).toUpperCase();
 
   return (
@@ -202,10 +210,24 @@ export default function Room() {
         {/* Header */}
         <div style={{ padding: "14px 16px", borderBottom: "1px solid #2a3942", display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ fontSize: 24 }}>💬</div>
-          <div>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ color: "#e9edef", fontWeight: 700, fontSize: 14 }}>Vaartalav</div>
-            <div style={{ color: "#00a884", fontSize: 11 }}>#{id}</div>
+            <div style={{ color: "#00a884", fontSize: 10, fontFamily: "monospace", letterSpacing: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{id}</div>
           </div>
+          <button
+            onClick={copyRoomId}
+            title="Copy Room ID"
+            style={{
+              background: copied ? "#00a884" : "#2a3942",
+              border: "none", borderRadius: 6, cursor: "pointer",
+              color: "#fff", fontSize: 11, fontWeight: 700,
+              padding: "5px 8px", flexShrink: 0,
+              transition: "background 0.2s",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {copied ? "✓ Copied" : "Copy ID"}
+          </button>
         </div>
 
         {/* Me */}

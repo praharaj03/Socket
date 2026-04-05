@@ -58,7 +58,7 @@ export default function Home() {
 
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ lineHeight: 1 }}><Image src="/logo.png" alt="Vaartalav" width={80} height={80} style={{ filter: "drop-shadow(0 0 16px rgba(255,0,51,0.8))" }} /></div>
+          <div style={{ lineHeight: 1 }}><Image src="/logo.png" alt="Vaartalav" width={80} height={80} loading="eager" priority style={{ width: 80, height: "auto", filter: "drop-shadow(0 0 16px rgba(255,0,51,0.8))" }} /></div>
           <h1
             className="glitch neon-text"
             data-text="VAARTALAV"

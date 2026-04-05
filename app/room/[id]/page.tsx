@@ -164,7 +164,7 @@ export default function Room() {
         {/* Sidebar header */}
         <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,0,51,0.15)", background: "#0a0a0a" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-            <Image src="/logo.png" alt="Vaartalav" width={32} height={32} style={{ filter: "drop-shadow(0 0 8px rgba(255,0,51,0.8))" }} />
+            <Image src="/logo.png" alt="Vaartalav" width={32} height={32} style={{ width: 32, height: "auto", filter: "drop-shadow(0 0 8px rgba(255,0,51,0.8))" }} />
             <div>
               <div style={{ color: "#ff0033", fontWeight: 900, fontSize: 13, letterSpacing: 3, fontFamily: "monospace" }}>VAARTALAV</div>
               <div style={{ color: "#333", fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Combat Chat</div>

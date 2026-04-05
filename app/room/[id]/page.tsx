@@ -7,7 +7,7 @@ import { useParams, useSearchParams, useRouter } from "next/navigation";
 type Message = { user: string; message: string };
 type User    = { id: string; name: string };
 
-const ROOM_ID_RE  = /^[a-zA-Z0-9_-]{1,60}$/;
+const ROOM_ID_RE  = /^[a-zA-Z0-9]{16}$/;
 const MAX_MSG_LEN = 1000;
 
 const ICE: RTCConfiguration = {

@@ -8,7 +8,7 @@ const MAX_ROOM_SIZE  = 20;
 const MAX_MSG_LEN    = 1000;
 const MAX_NAME_LEN   = 40;
 const MAX_ROOM_ID_LEN = 60;
-const ROOM_ID_RE     = /^[a-zA-Z0-9_-]+$/;
+const ROOM_ID_RE     = /^[a-zA-Z0-9]{16}$/;
 const NAME_RE        = /^[^\x00-\x1F<>"'`]{1,40}$/; // no control chars or HTML
 
 // ── Rate limiter (per socket) ─────────────────────────────────────────────────

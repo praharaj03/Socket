@@ -3,14 +3,22 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+function generateRoomId(): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let id = "";
+  const array = new Uint8Array(16);
+  crypto.getRandomValues(array);
+  for (const byte of array) id += chars[byte % chars.length];
+  return id;
+}
+
 export default function Home() {
   const [tab, setTab] = useState<"create" | "join">("create");
 
-  // Create Room state
   const [createName, setCreateName] = useState("");
-  const [createId,   setCreateId]   = useState("");
+  const [generatedId, setGeneratedId] = useState("");
+  const [copied, setCopied] = useState(false);
 
-  // Join Room state
   const [joinName, setJoinName] = useState("");
   const [joinId,   setJoinId]   = useState("");
 
@@ -19,17 +27,27 @@ export default function Home() {
 
   const handleCreate = () => {
     if (!createName.trim()) { setErr("Enter your name"); return; }
-    if (!createId.trim())   { setErr("Enter a room ID"); return; }
-    router.push(`/room/${createId.trim()}?name=${encodeURIComponent(createName.trim())}`);
+    const roomId = generateRoomId();
+    setGeneratedId(roomId);
+    setErr("");
+    router.push(`/room/${roomId}?name=${encodeURIComponent(createName.trim())}`);
   };
 
   const handleJoin = () => {
-    if (!joinName.trim()) { setErr("Enter your name"); return; }
-    if (!joinId.trim())   { setErr("Enter the room ID"); return; }
+    if (!joinName.trim())   { setErr("Enter your name"); return; }
+    if (!joinId.trim())     { setErr("Enter the room ID"); return; }
+    if (joinId.trim().length !== 16) { setErr("Room ID must be 16 characters"); return; }
     router.push(`/room/${joinId.trim()}?name=${encodeURIComponent(joinName.trim())}`);
   };
 
-  const switchTab = (t: "create" | "join") => { setTab(t); setErr(""); };
+  const copyId = () => {
+    if (!generatedId) return;
+    navigator.clipboard.writeText(generatedId);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const switchTab = (t: "create" | "join") => { setTab(t); setErr(""); setGeneratedId(""); };
 
   return (
     <div style={{
@@ -87,7 +105,7 @@ export default function Home() {
             {tab === "create" ? (
               <>
                 <p style={{ color: "#8696a0", fontSize: 12, marginBottom: 20, marginTop: 0 }}>
-                  Create a new room and share the Room ID with others.
+                  A unique 16-character Room ID will be generated for you. Share it with others to invite them.
                 </p>
                 <label style={labelStyle}>YOUR NAME</label>
                 <input
@@ -96,24 +114,17 @@ export default function Home() {
                   onChange={e => { setCreateName(e.target.value); setErr(""); }}
                   onKeyDown={e => e.key === "Enter" && handleCreate()}
                   style={inputStyle}
-                />
-                <label style={{ ...labelStyle, marginTop: 14 }}>ROOM ID</label>
-                <input
-                  placeholder="Choose a room ID (e.g. my-room-123)"
-                  value={createId}
-                  onChange={e => { setCreateId(e.target.value); setErr(""); }}
-                  onKeyDown={e => e.key === "Enter" && handleCreate()}
-                  style={inputStyle}
+                  autoFocus
                 />
                 {err && <div style={errStyle}>⚠ {err}</div>}
                 <button onClick={handleCreate} style={btnStyle("#00a884")}>
-                  Create &amp; Enter Room →
+                  Generate ID &amp; Enter Room →
                 </button>
               </>
             ) : (
               <>
                 <p style={{ color: "#8696a0", fontSize: 12, marginBottom: 20, marginTop: 0 }}>
-                  Join an existing room using the Room ID shared by the creator.
+                  Enter the 16-character Room ID shared by the room creator.
                 </p>
                 <label style={labelStyle}>YOUR NAME</label>
                 <input
@@ -122,15 +133,26 @@ export default function Home() {
                   onChange={e => { setJoinName(e.target.value); setErr(""); }}
                   onKeyDown={e => e.key === "Enter" && handleJoin()}
                   style={inputStyle}
+                  autoFocus
                 />
                 <label style={{ ...labelStyle, marginTop: 14 }}>ROOM ID</label>
-                <input
-                  placeholder="Enter the room ID to join"
-                  value={joinId}
-                  onChange={e => { setJoinId(e.target.value); setErr(""); }}
-                  onKeyDown={e => e.key === "Enter" && handleJoin()}
-                  style={inputStyle}
-                />
+                <div style={{ position: "relative" }}>
+                  <input
+                    placeholder="Paste 16-character room ID"
+                    value={joinId}
+                    onChange={e => { setJoinId(e.target.value.trim()); setErr(""); }}
+                    onKeyDown={e => e.key === "Enter" && handleJoin()}
+                    maxLength={16}
+                    style={{ ...inputStyle, fontFamily: "monospace", letterSpacing: 2 }}
+                  />
+                  <span style={{
+                    position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
+                    color: joinId.length === 16 ? "#00a884" : "#8696a0",
+                    fontSize: 11, fontWeight: 700,
+                  }}>
+                    {joinId.length}/16
+                  </span>
+                </div>
                 {err && <div style={errStyle}>⚠ {err}</div>}
                 <button onClick={handleJoin} style={btnStyle("#1d6fa4")}>
                   Join Room →

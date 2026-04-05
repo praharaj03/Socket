@@ -188,11 +188,11 @@ export default function Home() {
           <div style={{ lineHeight: 1 }}>
             <Image src="/logo.png" alt="Vaartalav" width={80} height={80} loading="eager" priority style={{ width: 80, height: "auto", filter: "drop-shadow(0 0 16px rgba(255,0,51,0.8))" }} />
           </div>
-          <h1 className="glitch neon-text" data-text="VAARTALAV" style={{ color: "#ff0033", fontSize: 32, fontWeight: 900, margin: "12px 0 4px", letterSpacing: 6, fontFamily: "monospace" }}>
+          <h1 className="glitch neon-text" data-text="VAARTALAV" style={{ color: "#ff0033", fontSize: 36, fontWeight: 900, margin: "12px 0 4px", letterSpacing: 6, fontFamily: "monospace" }}>
             VAARTALAV
           </h1>
           <div className="rgb-line" style={{ margin: "8px auto", width: 160 }} />
-          <p style={{ color: "#555", fontSize: 11, letterSpacing: 3, marginTop: 8, textTransform: "uppercase" }}>
+          <p style={{ color: "#555", fontSize: 13, letterSpacing: 3, marginTop: 8, textTransform: "uppercase" }}>
             Real-time · Chat · Voice
           </p>
         </div>
@@ -213,7 +213,7 @@ export default function Home() {
 
           {/* Form */}
           <div style={{ padding: "28px 28px 24px" }}>
-            <p style={{ color: "#444", fontSize: 11, marginBottom: 20, letterSpacing: 1, textTransform: "uppercase" }}>
+            <p style={{ color: "#444", fontSize: 12, marginBottom: 20, letterSpacing: 1, textTransform: "uppercase" }}>
               {tab === "create" ? "A unique 16-char room code will be generated" : "Enter the room code shared by the host"}
             </p>
 
@@ -250,7 +250,7 @@ export default function Home() {
             )}
 
             {err && (
-              <div style={{ color: "#ff0033", fontSize: 11, marginTop: 12, letterSpacing: 1, display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ color: "#ff0033", fontSize: 13, marginTop: 12, letterSpacing: 1, display: "flex", alignItems: "center", gap: 6 }}>
                 <span className="blink">▶</span> {err}
               </div>
             )}
@@ -277,7 +277,7 @@ export default function Home() {
                 clipPath: "polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%)",
               }}>
                 <span style={{ fontSize: 11 }}>{f.icon}</span>
-                <span style={{ color: "#ff0033", fontSize: 9, fontWeight: 700, letterSpacing: 1.5, fontFamily: "monospace" }}>{f.label}</span>
+                <span style={{ color: "#ff0033", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, fontFamily: "monospace" }}>{f.label}</span>
               </div>
             ))}
           </div>
@@ -286,9 +286,9 @@ export default function Home() {
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
             <div style={{ height: 1, width: 40, background: "linear-gradient(90deg, transparent, rgba(255,0,51,0.4))" }} />
             <div style={{ textAlign: "center" }}>
-              <span style={{ color: "#333", fontSize: 9, letterSpacing: 2, fontFamily: "monospace", textTransform: "uppercase" }}>DEVELOPER</span>
-              <span style={{ color: "rgba(255,0,51,0.4)", fontSize: 9, fontFamily: "monospace", margin: "0 6px" }}>_</span>
-              <span style={{ color: "#ff0033", fontSize: 11, fontWeight: 900, letterSpacing: 3, fontFamily: "monospace", textShadow: "0 0 8px rgba(255,0,51,0.6)" }} className="neon-text">ABHISEK</span>
+              <span style={{ color: "#333", fontSize: 11, letterSpacing: 2, fontFamily: "monospace", textTransform: "uppercase" }}>DEVELOPER</span>
+              <span style={{ color: "rgba(255,0,51,0.4)", fontSize: 11, fontFamily: "monospace", margin: "0 6px" }}>_</span>
+              <span style={{ color: "#ff0033", fontSize: 13, fontWeight: 900, letterSpacing: 3, fontFamily: "monospace", textShadow: "0 0 8px rgba(255,0,51,0.6)" }} className="neon-text">ABHISEK</span>
             </div>
             <div style={{ height: 1, width: 40, background: "linear-gradient(90deg, rgba(255,0,51,0.4), transparent)" }} />
           </div>
@@ -299,7 +299,7 @@ export default function Home() {
 }
 
 const labelStyle: React.CSSProperties = {
-  display: "block", fontSize: 10, fontWeight: 700,
+  display: "block", fontSize: 12, fontWeight: 700,
   letterSpacing: 2, color: "#ff0033", marginBottom: 8,
   textTransform: "uppercase", fontFamily: "monospace",
 };

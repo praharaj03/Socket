@@ -230,13 +230,13 @@ export default function Room() {
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
             <Image src="/logo.png" alt="Vaartalav" width={32} height={32} style={{ width: 32, height: "auto", filter: "drop-shadow(0 0 8px rgba(255,0,51,0.8))" }} />
             <div>
-              <div style={{ color: "#ff0033", fontWeight: 900, fontSize: 13, letterSpacing: 3, fontFamily: "monospace" }}>VAARTALAV</div>
-              <div style={{ color: "#333", fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Combat Chat</div>
+              <div style={{ color: "#ff0033", fontWeight: 900, fontSize: 15, letterSpacing: 3, fontFamily: "monospace" }}>VAARTALAV</div>
+              <div style={{ color: "#333", fontSize: 11, letterSpacing: 2, textTransform: "uppercase" }}>Combat Chat</div>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#141414", border: "1px solid rgba(255,0,51,0.15)", padding: "6px 10px" }}>
-            <span style={{ color: "#333", fontSize: 9, letterSpacing: 1, textTransform: "uppercase", flexShrink: 0 }}>ROOM</span>
-            <span style={{ color: "#ff0033", fontSize: 10, fontFamily: "monospace", letterSpacing: 1, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{id}</span>
+            <span style={{ color: "#333", fontSize: 11, letterSpacing: 1, textTransform: "uppercase", flexShrink: 0 }}>ROOM</span>
+            <span style={{ color: "#ff0033", fontSize: 11, fontFamily: "monospace", letterSpacing: 1, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{id}</span>
             <button onClick={copyRoomId} style={{ background: copied ? "rgba(255,0,51,0.3)" : "rgba(255,0,51,0.1)", border: "1px solid rgba(255,0,51,0.3)", color: copied ? "#fff" : "#ff0033", fontSize: 9, fontWeight: 700, padding: "3px 7px", cursor: "pointer", letterSpacing: 1, fontFamily: "monospace", flexShrink: 0, transition: "all 0.2s" }}>
               {copied ? "✓ OK" : "COPY"}
             </button>
@@ -246,23 +246,23 @@ export default function Room() {
         <div style={{ padding: "10px 16px", borderBottom: "1px solid rgba(255,0,51,0.1)", display: "flex", alignItems: "center", gap: 10 }}>
           <div style={avStyle("#ff0033")}>{av(name)}</div>
           <div>
-            <div style={{ color: "#f0f0f0", fontSize: 13, fontWeight: 700 }}>{name}</div>
+            <div style={{ color: "#f0f0f0", fontSize: 14, fontWeight: 700 }}>{name}</div>
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
               <span className="blink" style={{ width: 5, height: 5, borderRadius: "50%", background: "#ff0033", display: "inline-block" }} />
-              <span style={{ color: "#ff0033", fontSize: 9, letterSpacing: 1, textTransform: "uppercase" }}>Online</span>
+              <span style={{ color: "#ff0033", fontSize: 11, letterSpacing: 1, textTransform: "uppercase" }}>Online</span>
             </div>
           </div>
         </div>
 
         <div style={{ flex: 1, overflowY: "auto", padding: "8px 0" }}>
-          <div style={{ color: "#ff0033", fontSize: 9, fontWeight: 700, letterSpacing: 2, padding: "6px 16px 8px", textTransform: "uppercase", fontFamily: "monospace" }}>
+          <div style={{ color: "#ff0033", fontSize: 11, fontWeight: 700, letterSpacing: 2, padding: "6px 16px 8px", textTransform: "uppercase", fontFamily: "monospace" }}>
             ▶ Players ({users.length})
           </div>
           {users.map(u => (
             <div key={u.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 16px", borderLeft: u.id === socket.id ? "2px solid #ff0033" : "2px solid transparent", background: u.id === socket.id ? "rgba(255,0,51,0.05)" : "transparent", transition: "background 0.2s" }}>
               <div style={avStyle(u.id === socket.id ? "#ff0033" : "#1a1a1a")}>{av(u.name)}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ color: "#f0f0f0", fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <div style={{ color: "#f0f0f0", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {u.name}{u.id === socket.id && <span style={{ color: "#333", fontSize: 9, marginLeft: 4 }}>[YOU]</span>}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: 2 }}>
@@ -291,7 +291,7 @@ export default function Room() {
           <div style={{ padding: "12px 16px", borderTop: "1px solid rgba(255,0,51,0.2)", background: "rgba(255,0,51,0.06)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
               <span className="blink" style={{ width: 6, height: 6, borderRadius: "50%", background: "#ff0033", display: "inline-block" }} />
-              <span style={{ color: "#ff0033", fontSize: 10, fontWeight: 700, letterSpacing: 2, fontFamily: "monospace" }}>VOICE ACTIVE</span>
+              <span style={{ color: "#ff0033", fontSize: 12, fontWeight: 700, letterSpacing: 2, fontFamily: "monospace" }}>VOICE ACTIVE</span>
             </div>
             <div style={{ display: "flex", gap: 8 }}>
               <button onClick={toggleMute} className="rog-btn" style={callBtnStyle(muted ? "#ff0033" : "#1a1a1a")}>
@@ -310,8 +310,8 @@ export default function Room() {
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <button className="sidebar-toggle" onClick={() => setSidebarOpen(o => !o)}>☰</button>
             <div style={{ width: 8, height: 8, background: "#ff0033", boxShadow: "0 0 8px #ff0033" }} className="blink" />
-            <span style={{ color: "#f0f0f0", fontWeight: 700, fontSize: 14, letterSpacing: 2, textTransform: "uppercase", fontFamily: "monospace" }}>COMBAT CHAT</span>
-            <span style={{ background: "rgba(255,0,51,0.1)", border: "1px solid rgba(255,0,51,0.25)", color: "#ff0033", fontSize: 9, fontWeight: 700, padding: "2px 8px", letterSpacing: 1, fontFamily: "monospace" }}>{users.length} ONLINE</span>
+            <span style={{ color: "#f0f0f0", fontWeight: 700, fontSize: 15, letterSpacing: 2, textTransform: "uppercase", fontFamily: "monospace" }}>COMBAT CHAT</span>
+            <span style={{ background: "rgba(255,0,51,0.1)", border: "1px solid rgba(255,0,51,0.25)", color: "#ff0033", fontSize: 11, fontWeight: 700, padding: "2px 8px", letterSpacing: 1, fontFamily: "monospace" }}>{users.length} ONLINE</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ color: "#222", fontSize: 10, fontFamily: "monospace", letterSpacing: 1 }}>#{id.slice(0,8)}...</div>
@@ -320,23 +320,23 @@ export default function Room() {
         </div>
 
         {connErr && (
-          <div style={{ background: "rgba(255,0,51,0.15)", borderBottom: "1px solid rgba(255,0,51,0.3)", color: "#ff0033", fontSize: 12, padding: "10px 16px", textAlign: "center", letterSpacing: 1, fontFamily: "monospace" }}>
+          <div style={{ background: "rgba(255,0,51,0.15)", borderBottom: "1px solid rgba(255,0,51,0.3)", color: "#ff0033", fontSize: 13, padding: "10px 16px", textAlign: "center", letterSpacing: 1, fontFamily: "monospace" }}>
             ⚠ {connErr}
           </div>
         )}
 
         <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px", background: "#0a0a0a", display: "flex", flexDirection: "column", gap: 8 }}>
           {messages.length === 0 && (
-            <div style={{ textAlign: "center", color: "#1a1a1a", marginTop: 80, fontSize: 12, letterSpacing: 3, textTransform: "uppercase", fontFamily: "monospace" }}>▶ NO TRANSMISSIONS YET</div>
+            <div style={{ textAlign: "center", color: "#1a1a1a", marginTop: 80, fontSize: 13, letterSpacing: 3, textTransform: "uppercase", fontFamily: "monospace" }}>▶ NO TRANSMISSIONS YET</div>
           )}
           {messages.map((msg, i) => {
             const isMe = msg.user === escapeHtml(name);
             return (
               <div key={i} className="msg-in" style={{ display: "flex", justifyContent: isMe ? "flex-end" : "flex-start" }}>
                 <div style={{ maxWidth: "68%", background: isMe ? "rgba(255,0,51,0.12)" : "#141414", border: isMe ? "1px solid rgba(255,0,51,0.35)" : "1px solid #1f1f1f", padding: "9px 13px", clipPath: isMe ? "polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%)" : "polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px))", boxShadow: isMe ? "0 0 12px rgba(255,0,51,0.15)" : "none" }}>
-                  {!isMe && <div style={{ color: "#ff0033", fontSize: 10, fontWeight: 700, marginBottom: 3, letterSpacing: 1, fontFamily: "monospace" }}>▶ {msg.user}</div>}
-                  <div style={{ color: "#e0e0e0", fontSize: 13.5, lineHeight: 1.5, wordBreak: "break-word" }}>{msg.message}</div>
-                  <div style={{ color: "#333", fontSize: 9, textAlign: "right", marginTop: 4, fontFamily: "monospace" }}>
+                  {!isMe && <div style={{ color: "#ff0033", fontSize: 11, fontWeight: 700, marginBottom: 3, letterSpacing: 1, fontFamily: "monospace" }}>▶ {msg.user}</div>}
+                  <div style={{ color: "#e0e0e0", fontSize: 15, lineHeight: 1.5, wordBreak: "break-word" }}>{msg.message}</div>
+                  <div style={{ color: "#333", fontSize: 11, textAlign: "right", marginTop: 4, fontFamily: "monospace" }}>
                     {msg.ts}{isMe && <span style={{ marginLeft: 6, color: "#ff0033" }}>✓✓</span>}
                   </div>
                 </div>

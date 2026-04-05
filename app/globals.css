@@ -21,6 +21,7 @@ body {
   background: var(--rog-dark);
   color: var(--rog-text);
   font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }

@@ -32,12 +32,14 @@ function sanitize(str, maxLen) {
   return str.trim().slice(0, maxLen).replace(/<[^>]*>/g, "").replace(/[<>]/g, "");
 }
 
-const rooms = new Map();
+const rooms      = new Map();
+const roomOwners = new Map();
 
 function addUserToRoom(roomId, user) {
   if (!rooms.has(roomId)) rooms.set(roomId, []);
   const list = rooms.get(roomId);
   if (!list.some(u => u.id === user.id)) list.push(user);
+  if (!roomOwners.has(roomId)) roomOwners.set(roomId, user.id);
 }
 
 function removeUserFromRooms(socketId) {
@@ -46,8 +48,14 @@ function removeUserFromRooms(socketId) {
     const filtered = users.filter(u => u.id !== socketId);
     if (filtered.length !== users.length) {
       affected.push(roomId);
-      if (filtered.length === 0) rooms.delete(roomId);
-      else rooms.set(roomId, filtered);
+      if (filtered.length === 0) {
+        rooms.delete(roomId);
+        roomOwners.delete(roomId);
+      } else {
+        rooms.set(roomId, filtered);
+        if (roomOwners.get(roomId) === socketId)
+          roomOwners.set(roomId, filtered[0].id);
+      }
     }
   }
   return affected;
@@ -106,10 +114,24 @@ io.on("connection", (socket) => {
       socket.leave(joinedRoom);
       removeUserFromRooms(socket.id);
     }
+    // Cancel any pending auto-delete timer when someone joins
     joinedRoom = roomId;
     socket.join(roomId);
     addUserToRoom(roomId, { id: socket.id, name });
     io.to(roomId).emit("room-users", rooms.get(roomId));
+  });
+
+  socket.on("leave-room", () => {
+    if (!joinedRoom) return;
+    const roomId = joinedRoom;
+    joinedRoom = null;
+    socket.leave(roomId);
+    msgRates.delete(socket.id);
+    const affected = removeUserFromRooms(socket.id);
+    for (const rid of affected) {
+      const remaining = rooms.get(rid);
+      io.to(rid).emit("room-users", remaining ?? []);
+    }
   });
 
   socket.on("send-message", (data) => {

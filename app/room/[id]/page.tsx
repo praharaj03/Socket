@@ -125,9 +125,10 @@ export default function Room() {
     });
     socket.on("disconnect", () => setConnErr("CONNECTION LOST — RECONNECTING..."));
     socket.on("connect",    () => { setConnErr(""); socket.emit("join-room", id, name); });
+    socket.on("room-closed", (msg: string) => { alert(msg); router.replace("/"); });
 
     return () => {
-      ["error","receive-message","room-users","offer","answer","ice-candidate","disconnect","connect"]
+      ["error","receive-message","room-users","offer","answer","ice-candidate","disconnect","connect","room-closed"]
         .forEach(e => socket.off(e));
       endCall(); socket.disconnect();
     };
@@ -141,6 +142,13 @@ export default function Room() {
     if (!trimmed) return;
     socket.emit("send-message", { roomId: id, message: trimmed, user: name });
     setMessage(""); inputRef.current?.focus();
+  };
+
+  const leaveRoom = () => {
+    socket.emit("leave-room");
+    endCall();
+    socket.disconnect();
+    router.replace("/");
   };
 
   const copyRoomId = () => {
@@ -255,7 +263,7 @@ export default function Room() {
 
         {/* Chat header */}
         <div style={{ height: 54, padding: "0 20px", background: "#0f0f0f", borderBottom: "1px solid rgba(255,0,51,0.15)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 8, height: 8, background: "#ff0033", boxShadow: "0 0 8px #ff0033" }} className="blink" />
             <span style={{ color: "#f0f0f0", fontWeight: 700, fontSize: 14, letterSpacing: 2, textTransform: "uppercase", fontFamily: "monospace" }}>
               COMBAT CHAT
@@ -264,7 +272,24 @@ export default function Room() {
               {users.length} ONLINE
             </span>
           </div>
-          <div style={{ color: "#222", fontSize: 10, fontFamily: "monospace", letterSpacing: 1 }}>#{id.slice(0,8)}...</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ color: "#222", fontSize: 10, fontFamily: "monospace", letterSpacing: 1 }}>#{id.slice(0,8)}...</div>
+            <button
+              onClick={leaveRoom}
+              className="rog-btn"
+              title="Leave Room"
+              style={{
+                background: "rgba(255,0,51,0.1)",
+                border: "1px solid rgba(255,0,51,0.35)",
+                color: "#ff0033", fontSize: 10, fontWeight: 700,
+                padding: "5px 12px", cursor: "pointer",
+                letterSpacing: 1, fontFamily: "monospace",
+                textTransform: "uppercase",
+              }}
+            >
+              ✕ LEAVE
+            </button>
+          </div>
         </div>
 
         {/* Error banner */}

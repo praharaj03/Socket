@@ -39,6 +39,7 @@ export default function Room() {
   const [muted,    setMuted]    = useState(false);
   const [connErr,  setConnErr]  = useState("");
   const [copied,   setCopied]   = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const peers        = useRef<Map<string, RTCPeerConnection>>(new Map());
   const localStream  = useRef<MediaStream | null>(null);
@@ -166,8 +167,11 @@ export default function Room() {
       {/* Scan line */}
       <div className="scan-line" />
 
+      {/* Sidebar overlay for mobile */}
+      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
+
       {/* ── SIDEBAR ── */}
-      <div style={{ width: 260, flexShrink: 0, background: "#0f0f0f", borderRight: "1px solid rgba(255,0,51,0.2)", display: "flex", flexDirection: "column", position: "relative", zIndex: 10 }}>
+      <div className={`room-sidebar${sidebarOpen ? " open" : ""}`} style={{ width: 260, flexShrink: 0, background: "#0f0f0f", borderRight: "1px solid rgba(255,0,51,0.2)", display: "flex", flexDirection: "column", position: "relative", zIndex: 10 }}>
 
         {/* Sidebar header */}
         <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,0,51,0.15)", background: "#0a0a0a" }}>
@@ -262,8 +266,9 @@ export default function Room() {
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, position: "relative", zIndex: 10 }}>
 
         {/* Chat header */}
-        <div style={{ height: 54, padding: "0 20px", background: "#0f0f0f", borderBottom: "1px solid rgba(255,0,51,0.15)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+        <div style={{ height: 54, padding: "0 12px 0 16px", background: "#0f0f0f", borderBottom: "1px solid rgba(255,0,51,0.15)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <button className="sidebar-toggle" onClick={() => setSidebarOpen(o => !o)}>☰</button>
             <div style={{ width: 8, height: 8, background: "#ff0033", boxShadow: "0 0 8px #ff0033" }} className="blink" />
             <span style={{ color: "#f0f0f0", fontWeight: 700, fontSize: 14, letterSpacing: 2, textTransform: "uppercase", fontFamily: "monospace" }}>
               COMBAT CHAT

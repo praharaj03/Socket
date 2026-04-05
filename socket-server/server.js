@@ -122,6 +122,8 @@ io.on("connection", (socket) => {
     socket.join(roomId);
     addUserToRoom(roomId, { id: socket.id, name });
     io.to(roomId).emit("room-users", rooms.get(roomId));
+    // Tell everyone who the owner is
+    io.to(roomId).emit("room-owner", roomOwners.get(roomId));
   }
 
   socket.on("join-room", (rawRoomId, rawName) => {
@@ -236,6 +238,21 @@ io.on("connection", (socket) => {
     const { target } = data;
     if (typeof target !== "string") return;
     socket.to(target).emit("call-rejected");
+  });
+
+  socket.on("kick-user", (data) => {
+    if (!joinedRoom || typeof data !== "object" || !data) return;
+    const { target } = data;
+    if (typeof target !== "string") return;
+    // Only room owner can kick
+    if (roomOwners.get(joinedRoom) !== socket.id) return;
+    // Can't kick yourself
+    if (target === socket.id) return;
+    // Target must be in the same room
+    const roomUsers = rooms.get(joinedRoom) ?? [];
+    if (!roomUsers.some(u => u.id === target)) return;
+    // Notify the kicked user
+    io.to(target).emit("kicked", "You were removed from the room by the host.");
   });
 
   socket.on("disconnect", () => {

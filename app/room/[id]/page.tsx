@@ -42,6 +42,7 @@ export default function Room() {
   const [copied,       setCopied]       = useState(false);
   const [sidebarOpen,  setSidebarOpen]  = useState(false);
   const [incomingCall, setIncomingCall] = useState<IncomingCall | null>(null);
+  const [ownerId,      setOwnerId]      = useState<string>("");
   const [roomConflict, setRoomConflict] = useState<RoomConflict | null>(null);
 
   const peers        = useRef<Map<string, RTCPeerConnection>>(new Map());
@@ -120,6 +121,10 @@ export default function Room() {
     setIncomingCall(null);
   };
 
+  const kickUser = (targetId: string) => {
+    socket.emit("kick-user", { target: targetId });
+  };
+
   const leaveRoom = () => {
     socket.emit("leave-room");
     endCall();
@@ -177,6 +182,14 @@ export default function Room() {
       setTimeout(() => setConnErr(""), 3000);
     });
 
+    socket.on("room-owner", (ownerSocketId: string) => setOwnerId(ownerSocketId));
+
+    socket.on("kicked", () => {
+      endCall();
+      socket.disconnect();
+      router.replace("/?kicked=1");
+    });
+
     socket.on("disconnect", () => setConnErr("CONNECTION LOST — RECONNECTING..."));
     socket.on("connect",    () => { setConnErr(""); joinRoom(); });
     socket.on("room-closed", (msg: string) => { alert(msg); router.replace("/"); });
@@ -184,7 +197,7 @@ export default function Room() {
     socket.on("participant-room-conflict", (d: { currentRoomId: string }) => setRoomConflict({ type: "participant", currentRoomId: d.currentRoomId }));
 
     return () => {
-      ["error","receive-message","room-users","offer","answer","ice-candidate","call-rejected","disconnect","connect","room-closed","owner-room-conflict","participant-room-conflict"]
+      ["error","receive-message","room-users","offer","answer","ice-candidate","call-rejected","room-owner","kicked","disconnect","connect","room-closed","owner-room-conflict","participant-room-conflict"]
         .forEach(e => socket.off(e));
       endCall();
       socket.disconnect();
@@ -259,6 +272,16 @@ export default function Room() {
               </div>
               {u.id !== socket.id && !inCall && !u.offline && (
                 <button onClick={() => startCall(u.id)} title="Voice call" style={{ background: "rgba(255,0,51,0.1)", border: "1px solid rgba(255,0,51,0.3)", color: "#ff0033", width: 26, height: 26, cursor: "pointer", fontSize: 12, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>☎</button>
+              )}
+              {/* Kick button — only visible to owner */}
+              {u.id !== socket.id && socket.id === ownerId && (
+                <button
+                  onClick={() => kickUser(u.id)}
+                  title="Remove from room"
+                  style={{ background: "rgba(255,0,51,0.08)", border: "1px solid rgba(255,0,51,0.2)", color: "#ff0033", width: 26, height: 26, cursor: "pointer", fontSize: 11, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                >
+                  ✕
+                </button>
               )}
             </div>
           ))}

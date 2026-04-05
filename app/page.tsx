@@ -37,7 +37,7 @@ export default function Home() {
   const switchTab = (t: "create" | "join") => { setTab(t); setErr(""); };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0a0a0a", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, position: "relative", overflow: "hidden" }}>
+    <div style={{ minHeight: "100vh", minHeight: "100dvh", background: "#0a0a0a", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, position: "relative", overflow: "hidden" }}>
 
       {/* Hex grid */}
       <div className="hex-bg" />
@@ -91,15 +91,15 @@ export default function Home() {
                 onClick={() => switchTab(t)}
                 className="rog-btn"
                 style={{
-                  flex: 1, padding: "14px", background: tab === t ? "rgba(255,0,51,0.08)" : "none",
+                  flex: 1, padding: "16px 14px", background: tab === t ? "rgba(255,0,51,0.08)" : "none",
                   border: "none", borderBottom: tab === t ? "2px solid #ff0033" : "2px solid transparent",
                   color: tab === t ? "#ff0033" : "#555",
-                  fontWeight: 700, fontSize: 12, cursor: "pointer",
+                  fontWeight: 700, fontSize: 13, cursor: "pointer",
                   letterSpacing: 2, textTransform: "uppercase", fontFamily: "monospace",
                   transition: "all 0.2s",
                 }}
               >
-                {t === "create" ? "[ CREATE ROOM ]" : "[ JOIN ROOM ]"}
+                {t === "create" ? "[ CREATE ]" : "[ JOIN ]"}
               </button>
             ))}
           </div>
@@ -158,10 +158,10 @@ export default function Home() {
               onClick={tab === "create" ? handleCreate : handleJoin}
               className="rog-btn"
               style={{
-                width: "100%", marginTop: 20, padding: "13px",
+                width: "100%", marginTop: 20, padding: "15px",
                 background: "linear-gradient(135deg, #ff0033 0%, #cc0022 100%)",
                 color: "#fff", border: "none",
-                fontSize: 12, fontWeight: 900, cursor: "pointer",
+                fontSize: 13, fontWeight: 900, cursor: "pointer",
                 letterSpacing: 3, textTransform: "uppercase", fontFamily: "monospace",
                 clipPath: "polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))",
                 boxShadow: "0 0 20px rgba(255,0,51,0.4)",
@@ -187,10 +187,10 @@ const labelStyle: React.CSSProperties = {
 };
 
 const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "11px 14px",
+  width: "100%", padding: "13px 14px",
   background: "#0a0a0a",
   border: "1px solid rgba(255,0,51,0.25)",
-  borderRadius: 0, color: "#f0f0f0", fontSize: 14,
+  borderRadius: 0, color: "#f0f0f0", fontSize: 16,
   outline: "none", boxSizing: "border-box", fontFamily: "inherit",
   transition: "border-color 0.2s, box-shadow 0.2s",
 };

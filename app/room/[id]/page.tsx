@@ -217,7 +217,7 @@ export default function Room() {
   const av = (n: string) => n.charAt(0).toUpperCase();
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#0a0a0a", fontFamily: "'Segoe UI', sans-serif", overflow: "hidden", position: "relative" }}>
+    <div style={{ display: "flex", height: "100dvh", background: "#0a0a0a", fontFamily: "'Segoe UI', sans-serif", overflow: "hidden", position: "relative" }}>
       <div className="hex-bg" />
       <div className="scan-line" />
 
@@ -306,7 +306,7 @@ export default function Room() {
       {/* ── CHAT ── */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, position: "relative", zIndex: 10 }}>
 
-        <div style={{ height: 54, padding: "0 12px 0 16px", background: "#0f0f0f", borderBottom: "1px solid rgba(255,0,51,0.15)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+        <div style={{ height: 54, padding: "0 12px 0 12px", background: "#0f0f0f", borderBottom: "1px solid rgba(255,0,51,0.15)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <button className="sidebar-toggle" onClick={() => setSidebarOpen(o => !o)}>☰</button>
             <div style={{ width: 8, height: 8, background: "#ff0033", boxShadow: "0 0 8px #ff0033" }} className="blink" />
@@ -320,7 +320,7 @@ export default function Room() {
         </div>
 
         {connErr && (
-          <div style={{ background: "rgba(255,0,51,0.15)", borderBottom: "1px solid rgba(255,0,51,0.3)", color: "#ff0033", fontSize: 11, padding: "8px 20px", textAlign: "center", letterSpacing: 1, fontFamily: "monospace" }}>
+          <div style={{ background: "rgba(255,0,51,0.15)", borderBottom: "1px solid rgba(255,0,51,0.3)", color: "#ff0033", fontSize: 12, padding: "10px 16px", textAlign: "center", letterSpacing: 1, fontFamily: "monospace" }}>
             ⚠ {connErr}
           </div>
         )}
@@ -346,7 +346,7 @@ export default function Room() {
           <div ref={messagesEnd} />
         </div>
 
-        <div style={{ padding: "10px 16px", background: "#0f0f0f", borderTop: "1px solid rgba(255,0,51,0.15)", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+        <div style={{ padding: "10px 12px", background: "#0f0f0f", borderTop: "1px solid rgba(255,0,51,0.15)", display: "flex", alignItems: "center", gap: 8, flexShrink: 0, paddingBottom: "max(10px, env(safe-area-inset-bottom))" }}>
           <input
             ref={inputRef}
             value={message}
@@ -356,7 +356,7 @@ export default function Room() {
             maxLength={MAX_MSG_LEN}
             autoComplete="off"
             className="rog-input"
-            style={{ flex: 1, padding: "11px 16px", background: "#0a0a0a", border: "1px solid rgba(255,0,51,0.2)", color: "#f0f0f0", fontSize: 13, outline: "none", fontFamily: "inherit", letterSpacing: 0.3, transition: "border-color 0.2s, box-shadow 0.2s" }}
+            style={{ flex: 1, padding: "12px 16px", background: "#0a0a0a", border: "1px solid rgba(255,0,51,0.2)", color: "#f0f0f0", fontSize: 16, outline: "none", fontFamily: "inherit", letterSpacing: 0.3, transition: "border-color 0.2s, box-shadow 0.2s", borderRadius: 4 }}
           />
           <button onClick={sendMessage} disabled={!message.trim()} className="rog-btn" aria-label="Send" style={{ width: 44, height: 44, flexShrink: 0, background: message.trim() ? "linear-gradient(135deg,#ff0033,#cc0022)" : "#141414", border: "1px solid rgba(255,0,51,0.3)", color: "#fff", fontSize: 16, cursor: message.trim() ? "pointer" : "not-allowed", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: message.trim() ? "0 0 16px rgba(255,0,51,0.5)" : "none", transition: "all 0.2s", clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))" }}>➤</button>
         </div>
@@ -391,13 +391,13 @@ export default function Room() {
       {/* ── INCOMING CALL MODAL ── */}
       {incomingCall && (
         <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ background: "#0f0f0f", border: "1px solid rgba(255,0,51,0.5)", padding: "32px 36px", textAlign: "center", boxShadow: "0 0 40px rgba(255,0,51,0.3)", minWidth: 280, clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))" }}>
+          <div style={{ background: "#0f0f0f", border: "1px solid rgba(255,0,51,0.5)", padding: "28px 24px", textAlign: "center", boxShadow: "0 0 40px rgba(255,0,51,0.3)", width: "min(320px, 90vw)", clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))" }}>
             <div style={{ fontSize: 48, marginBottom: 12 }}>📞</div>
             <div style={{ color: "#ff0033", fontSize: 11, letterSpacing: 3, fontFamily: "monospace", marginBottom: 6, textTransform: "uppercase" }}>Incoming Call</div>
             <div style={{ color: "#f0f0f0", fontSize: 18, fontWeight: 700, marginBottom: 24 }}>{incomingCall.name}</div>
             <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-              <button onClick={acceptCall} style={{ padding: "10px 28px", background: "#00aa44", border: "none", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", letterSpacing: 2, fontFamily: "monospace", textTransform: "uppercase", clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))", boxShadow: "0 0 16px rgba(0,170,68,0.5)" }}>✓ ACCEPT</button>
-              <button onClick={rejectCall} style={{ padding: "10px 28px", background: "#ff0033", border: "none", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", letterSpacing: 2, fontFamily: "monospace", textTransform: "uppercase", clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))", boxShadow: "0 0 16px rgba(255,0,51,0.5)" }}>✕ REJECT</button>
+              <button onClick={acceptCall} style={{ padding: "12px 24px", background: "#00aa44", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", letterSpacing: 2, fontFamily: "monospace", textTransform: "uppercase", clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))", boxShadow: "0 0 16px rgba(0,170,68,0.5)", flex: 1 }}>✓ ACCEPT</button>
+              <button onClick={rejectCall} style={{ padding: "12px 24px", background: "#ff0033", border: "none", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", letterSpacing: 2, fontFamily: "monospace", textTransform: "uppercase", clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))", boxShadow: "0 0 16px rgba(255,0,51,0.5)", flex: 1 }}>✕ REJECT</button>
             </div>
           </div>
         </div>

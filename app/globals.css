@@ -167,37 +167,94 @@ body {
 
 /* ── Mobile responsive ── */
 @media (max-width: 640px) {
+  /* Sidebar slides in as drawer */
   .room-sidebar {
     position: fixed !important;
     top: 0; left: 0; bottom: 0;
     z-index: 100;
     transform: translateX(-100%);
-    transition: transform 0.25s ease;
-    width: 260px !important;
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    width: 80vw !important;
+    max-width: 300px !important;
+    box-shadow: none;
   }
   .room-sidebar.open {
     transform: translateX(0);
-    box-shadow: 4px 0 24px rgba(0,0,0,0.8);
+    box-shadow: 6px 0 32px rgba(0,0,0,0.9), 0 0 40px rgba(255,0,51,0.15);
   }
-  .sidebar-overlay {
-    display: block !important;
-  }
-  .sidebar-toggle {
-    display: flex !important;
+  .sidebar-overlay { display: block !important; }
+  .sidebar-toggle  { display: flex !important; }
+
+  /* Bigger touch targets */
+  .rog-btn { min-height: 44px; }
+
+  /* Home page card full width */
+  .home-card { margin: 0 8px; }
+
+  /* Larger input on mobile */
+  .rog-input { font-size: 16px !important; } /* prevents iOS zoom */
+
+  /* Chat header compact */
+  .chat-header-title { font-size: 12px !important; letter-spacing: 1px !important; }
+
+  /* Message bubbles wider on mobile */
+  .msg-bubble { max-width: 85% !important; }
+
+  /* Bottom input bar safe area */
+  .input-bar { padding-bottom: max(10px, env(safe-area-inset-bottom)) !important; }
+
+  /* Modals full width on mobile */
+  .modal-box { width: 90vw !important; min-width: unset !important; padding: 24px 20px !important; }
+}
+
+/* ── Tablet ── */
+@media (max-width: 900px) and (min-width: 641px) {
+  .room-sidebar {
+    width: 220px !important;
   }
 }
+
+/* ── Touch feedback ── */
+@media (hover: none) {
+  .rog-btn:active {
+    transform: scale(0.96) !important;
+    opacity: 0.85;
+  }
+  .rog-btn:hover {
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+/* ── Prevent text selection on buttons ── */
+button { -webkit-tap-highlight-color: transparent; user-select: none; }
+
 .sidebar-overlay {
   display: none;
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(2px);
   z-index: 99;
+  transition: opacity 0.2s;
 }
 .sidebar-toggle {
   display: none;
   align-items: center; justify-content: center;
   background: rgba(255,0,51,0.1);
   border: 1px solid rgba(255,0,51,0.35);
-  color: #ff0033; font-size: 16px;
-  width: 36px; height: 36px;
+  color: #ff0033; font-size: 18px;
+  width: 40px; height: 40px;
   cursor: pointer; flex-shrink: 0;
+  border-radius: 4px;
+  transition: background 0.2s;
 }
+.sidebar-toggle:active { background: rgba(255,0,51,0.25); }
+
+/* ── Swipe hint animation on first load ── */
+@keyframes swipe-hint {
+  0%   { transform: translateX(0); }
+  30%  { transform: translateX(8px); }
+  60%  { transform: translateX(0); }
+  100% { transform: translateX(0); }
+}
+.swipe-hint { animation: swipe-hint 1.5s ease 1s 2; }

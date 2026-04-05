@@ -261,9 +261,38 @@ export default function Home() {
           </div>
         </div>
 
-        <p style={{ color: "#2a2a2a", fontSize: 10, textAlign: "center", marginTop: 16, letterSpacing: 2, textTransform: "uppercase" }}>
-          No account · WebRTC encrypted · Zero latency
-        </p>
+        <div style={{ marginTop: 20, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+          {/* Feature badges */}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+            {[
+              { icon: "🔒", label: "NO ACCOUNT" },
+              { icon: "🔐", label: "WebRTC ENCRYPTED" },
+              { icon: "⚡", label: "ZERO LATENCY" },
+            ].map(f => (
+              <div key={f.label} style={{
+                display: "flex", alignItems: "center", gap: 5,
+                background: "rgba(255,0,51,0.06)",
+                border: "1px solid rgba(255,0,51,0.2)",
+                padding: "5px 10px",
+                clipPath: "polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%)",
+              }}>
+                <span style={{ fontSize: 11 }}>{f.icon}</span>
+                <span style={{ color: "#ff0033", fontSize: 9, fontWeight: 700, letterSpacing: 1.5, fontFamily: "monospace" }}>{f.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Developer credit */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+            <div style={{ height: 1, width: 40, background: "linear-gradient(90deg, transparent, rgba(255,0,51,0.4))" }} />
+            <div style={{ textAlign: "center" }}>
+              <span style={{ color: "#333", fontSize: 9, letterSpacing: 2, fontFamily: "monospace", textTransform: "uppercase" }}>DEVELOPER</span>
+              <span style={{ color: "rgba(255,0,51,0.4)", fontSize: 9, fontFamily: "monospace", margin: "0 6px" }}>_</span>
+              <span style={{ color: "#ff0033", fontSize: 11, fontWeight: 900, letterSpacing: 3, fontFamily: "monospace", textShadow: "0 0 8px rgba(255,0,51,0.6)" }} className="neon-text">ABHISEK</span>
+            </div>
+            <div style={{ height: 1, width: 40, background: "linear-gradient(90deg, rgba(255,0,51,0.4), transparent)" }} />
+          </div>
+        </div>
       </div>
     </div>
   );
